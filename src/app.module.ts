@@ -9,8 +9,8 @@ import { ApiService } from './api/api.service';
 import { ApiModule } from './api/api.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IsUniqueConstraint } from './util/validators';
-import { databaseConfig } from '../db.config';
-import { User } from "./users/user.entity";
+import { User } from './users/user.entity';
+
 @Module({
   controllers: [AppController, ApiController],
   imports: [

@@ -1,4 +1,5 @@
 import { User } from './src/users/user.entity';
+console.log('halelujaa')
 export const databaseConfig = {
   database: 'dmarket',
   entities: [User],
