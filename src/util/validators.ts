@@ -33,7 +33,7 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
 
   defaultMessage(validationArguments?: ValidationArguments): string {
     const field: string = validationArguments.property;
-    return `${field} is already exist`;
+    return `${field} already exist`;
   }
 }
 

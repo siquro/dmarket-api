@@ -3,7 +3,7 @@ import { isUnique } from '../util/validators';
 export class RegisterUserDTO {
   @IsNotEmpty()
   @IsEmail()
-  @isUnique({ tableName: 'users', column: 'email' })
+  @isUnique({ tableName: 'user', column: 'email' })
   email: string;
   @IsNotEmpty()
   readonly password: string;

@@ -10,15 +10,14 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async findVerifiedAccount(email: string): Promise<User | undefined> {
+  async findByMail(email: string): Promise<User | undefined> {
     return this.usersRepository.findOneBy({
-      emailVerified: true,
       email: email,
     });
   }
 
   async create(user: CreateUserDTO): Promise<User> {
-    return this.usersRepository.create(user);
+    return this.usersRepository.save(user);
   }
 
   async verifyToken(token: string): Promise<boolean> {

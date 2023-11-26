@@ -13,9 +13,16 @@ export class AuthService {
   ) {}
 
   async signIn(email, password) {
-    const user = await this.usersService.findVerifiedAccount(email);
-    if (!this.bcryptHashCompare(password, user.password)) {
-      throw new UnauthorizedException();
+    const user = await this.usersService.findByMail(email);
+    if (!user) throw new UnauthorizedException('No user with such credentials');
+
+    if (!user.emailVerified)
+      throw new UnauthorizedException('Unauthorized account');
+
+    const match = await this.bcryptHashCompare(password, user.password);
+
+    if (!match) {
+      throw new UnauthorizedException('Wrong Password');
     }
 
     const payload = { id: user.id, email: user.email };
