@@ -8,26 +8,30 @@ import { ApiController } from './api/api.controller';
 import { ApiService } from './api/api.service';
 import { ApiModule } from './api/api.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { IsUniqueConstraint } from './util/validators';
+import { IsUniqueConstraint } from './util/validators/unique';
 import { User } from './users/user.entity';
+
+import { EmailModule } from './email/email.module';
+
+const database = TypeOrmModule.forRoot({
+  database: 'dmarket',
+  entities: [User],
+  host: '127.0.0.1',
+  username: 'root',
+  password: '',
+  port: 3306,
+  synchronize: false,
+  type: 'mysql',
+});
 
 @Module({
   controllers: [AppController, ApiController],
   imports: [
-    AuthModule,
-    UsersModule,
+    EmailModule,
     ConfigModule.forRoot(),
-    // @ts-ignore
-    TypeOrmModule.forRoot({
-      database: 'dmarket',
-      entities: [User],
-      host: '127.0.0.1',
-      username: 'root',
-      password: '',
-      port: 3306,
-      synchronize: false,
-      type: 'mysql',
-    }),
+    AuthModule,
+    UsersModule, // @ts-ignore
+    database,
     ApiModule,
   ],
   providers: [AppService, ApiService, IsUniqueConstraint],

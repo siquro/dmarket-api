@@ -4,8 +4,10 @@ import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
+import { EmailModule } from '../email/email.module';
 @Module({
   imports: [
+    EmailModule,
     UsersModule,
     JwtModule.register({
       global: true,

@@ -18,10 +18,8 @@ export type IsUniqeInterface = {
 export class IsUniqueConstraint implements ValidatorConstraintInterface {
   constructor(private readonly entityManager: EntityManager) {}
   async validate(value: any, args?: ValidationArguments): Promise<boolean> {
-    // catch options from decorator
     const { tableName, column }: IsUniqeInterface = args.constraints[0];
 
-    // database query check data is exists
     const dataExist = await this.entityManager
       .getRepository(tableName)
       .createQueryBuilder(tableName)

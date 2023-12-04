@@ -27,7 +27,7 @@ export class UsersService {
       user.emailToken = 'secret';
       user.emailVerified = true;
 
-      this.usersRepository.save(user);
+      await this.usersRepository.save(user);
     }
 
     return Boolean(user);

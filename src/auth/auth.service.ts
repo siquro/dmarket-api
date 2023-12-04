@@ -4,16 +4,19 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDTO } from '../users/user.register.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/user.entity';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private emailService: EmailService,
   ) {}
 
   async signIn(email, password) {
     const user = await this.usersService.findByMail(email);
+
     if (!user) throw new UnauthorizedException('No user with such credentials');
 
     if (!user.emailVerified)
@@ -22,13 +25,13 @@ export class AuthService {
     const match = await this.bcryptHashCompare(password, user.password);
 
     if (!match) {
-      throw new UnauthorizedException('Wrong Password');
+      throw new UnauthorizedException();
     }
 
     const payload = { id: user.id, email: user.email };
 
     return {
-      token: await this.jwtService.signAsync(payload),
+      token: await this.jwtService.signAsync(payload), // this creates new token, basically calls this refreshes token
     };
   }
 
@@ -40,7 +43,7 @@ export class AuthService {
 
   async register(user: RegisterUserDTO): Promise<User> {
     const hashedPassword = await this.bcryptHash(user.password);
-
+    // @ts-ignore
     const newUser: User = await this.usersService.create({
       password: hashedPassword,
       email: user.email,
@@ -50,7 +53,7 @@ export class AuthService {
       lastName: user.lastName,
     });
 
-    // this.emailService.sendRegistratonEmail(newUser);
+    await this.emailService.sendUserWelcome(newUser, hashedPassword);
 
     return newUser;
   }

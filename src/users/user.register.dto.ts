@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { isUnique } from '../util/validators';
+import { isUnique } from '../util/validators/unique';
 export class RegisterUserDTO {
   @IsNotEmpty()
   @IsEmail()
