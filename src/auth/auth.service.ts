@@ -53,9 +53,23 @@ export class AuthService {
       lastName: user.lastName,
     });
 
-    await this.emailService.sendUserWelcome(newUser, hashedPassword);
+    await this.emailService.sendEmailVerifyLink(newUser, hashedPassword);
 
     return newUser;
+  }
+
+  async resetProfile(email: string): Promise<string> {
+    const user = await this.usersService.findByMail(email);
+
+    if (!user) throw new UnauthorizedException();
+
+    /*  token for a link where he can add password */
+
+    return await this.emailService.sendResetEmailVerificationLink(user);
+  }
+
+  async updatePassword(token, password): boolean {
+    return true;
   }
 
   async bcryptHashCompare(password: string, hash: string): Promise<boolean> {
