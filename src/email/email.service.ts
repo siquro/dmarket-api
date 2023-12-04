@@ -10,11 +10,11 @@ const sgMail = require('@sendgrid/mail');
 export class EmailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendEmailVerifyLink(user: User, token: string) {
+  async sendEmailVerifyLink(email, token: string) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     return await sgMail.send({
-      to: user.email,
+      to: email,
       from: process.env.DEV_EMAIL_FROM,
       subject: 'Verify your email',
       html: `<strong> <a href="${encodeURI(
@@ -23,15 +23,15 @@ export class EmailService {
     });
   }
 
-  async sendResetEmailVerificationLink(user: User, token) {
+  async sendResetEmailVerificationLink(email, token) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     return await sgMail.send({
-      to: user.email,
+      to: email,
       from: process.env.DEV_EMAIL_FROM,
       subject: 'Reset you email',
       html: `<strong> <a href="${encodeURI(
-        process.env.RESET_EMAIL_LINK + token,
+        process.env.RESET_EMAIL_LINK + encodeURIComponent(token),
       )}">Account verification link</strong>`,
     });
   }

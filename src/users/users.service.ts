@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { CreateUserDTO } from './user.create.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
+
+  async save(user: User) {
+    return await this.usersRepository.save(user);
+  }
 
   async findByMail(email: string): Promise<User | undefined> {
     return this.usersRepository.findOneBy({
@@ -31,5 +35,16 @@ export class UsersService {
     }
 
     return Boolean(user);
+  }
+
+  async updatePasswordByToken(
+    token: string,
+    password: string,
+  ): Promise<UpdateResult> {
+    console.log(await this.usersRepository.findOneBy({ emailToken: token }));
+    return await this.usersRepository.update(
+      { emailToken: token },
+      { password: password },
+    );
   }
 }

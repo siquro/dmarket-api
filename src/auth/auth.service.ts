@@ -5,6 +5,7 @@ import { RegisterUserDTO } from '../users/user.register.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/user.entity';
 import { EmailService } from '../email/email.service';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -53,7 +54,7 @@ export class AuthService {
       lastName: user.lastName,
     });
 
-    await this.emailService.sendEmailVerifyLink(newUser, hashedPassword);
+    await this.emailService.sendEmailVerifyLink(newUser.email, hashedPassword);
 
     return newUser;
   }
@@ -63,13 +64,24 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException();
 
-    /*  token for a link where he can add password */
+    const token = await this.bcryptHash(new Date().toUTCString());
 
-    return await this.emailService.sendResetEmailVerificationLink(user);
+    user.emailVerified = false;
+    user.emailToken = token;
+
+    await this.usersService.save(user);
+
+    return await this.emailService.sendResetEmailVerificationLink(
+      user.email,
+      token,
+    );
   }
 
-  async updatePassword(token, password): boolean {
-    return true;
+  async updatePassword(token, password): Promise<UpdateResult> {
+    return await this.usersService.updatePasswordByToken(
+      decodeURIComponent(token),
+      await this.bcryptHash(password),
+    );
   }
 
   async bcryptHashCompare(password: string, hash: string): Promise<boolean> {

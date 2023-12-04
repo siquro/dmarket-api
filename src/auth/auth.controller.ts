@@ -30,17 +30,17 @@ export class AuthController {
     return this.authService.register(request);
   }
 
+  @Post('reset/:token')
+  async updatePassword(
+    @Param('token') token: string,
+    @Body() request: UpdateUserPasswordDTO,
+  ) {
+    return await this.authService.updatePassword(token, request.password);
+  }
+
   @Post('reset')
   async reset(@Body() request: ResetUserDTO) {
     return await this.authService.resetProfile(request.email);
-  }
-
-  @Post('reset/password')
-  async updatePassword(@Body() request: UpdateUserPasswordDTO) {
-    return await this.authService.updatePassword(
-      request.token,
-      request.password,
-    );
   }
 
   /*
